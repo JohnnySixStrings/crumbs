@@ -1,0 +1,53 @@
+﻿@page "/Highscore"
+@using crumbs.Data
+@using Microsoft.EntityFrameworkCore
+@implements IDisposable
+
+@inject IDbContextFactory<HangmanDb> DbFactory
+<h3>Highscore</h3>
+
+@if (TopScorers == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTable Items="TopScorers" Hover="true" SortLabel="Sort By" Elevation="0">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<Highscore, object>(x=>x.Username)">Username</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Highscore, object>(x=>x.Score)">Score</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Username">@context.Username</MudTd>
+            <MudTd DataLabel="Score">@context.Score</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        </PagerContent>
+    </MudTable>
+}
+
+@code {
+    List<Highscore> TopScorers = new List<Highscore>();
+    private HangmanDb HangmanDbContest { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        HangmanDbContest = await DbFactory.CreateDbContextAsync();
+        IQueryable<Highscore> query2 =
+            HangmanDbContest.Highscores
+                .OrderBy(s => s.Score)
+                .Take(10);
+        var query = HangmanDbContest.Highscores
+            .OrderByDescending(s => s.Score)
+            .Take(10);
+        
+        TopScorers = query
+            .ToList();
+        await base.OnInitializedAsync();
+    }
+    public void Dispose()
+    {
+        HangmanDbContest?.Dispose();
+    }
+}

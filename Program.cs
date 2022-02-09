@@ -6,6 +6,7 @@ using MudBlazor.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContextFactory<HangmanDb>();
 builder.Services.AddRazorPages();
 builder.Services.AddMudServices();
 builder.Services.AddServerSideBlazor();
@@ -29,5 +30,6 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
+var hangmanDb = new HangmanDb();
+hangmanDb.Database.EnsureCreated();
 app.Run();
