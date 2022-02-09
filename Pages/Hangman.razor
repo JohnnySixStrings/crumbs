@@ -1,6 +1,53 @@
-﻿@page "/Hangman"
-<h3>Hangman</h3>
+﻿@page "/hangman"
+
+<PageTitle>Hangman!</PageTitle>
+<h1>Hangman</h1>
+
+@if (imageSource is not null) {
+    <div>
+        <img src="@imageSource" />
+    </div>
+}
+
+<div>INSERT MUDBLAZOR INPUTFIELD HERE</div>
+<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="GuessLetter">Guess Letter!</MudButton>
 
 @code {
-    
+    //should we start on 0.jpg? or should the first guess draw the head?
+    private int numberGuess = 0;
+    private string? imageSource = $"images/0.jpg";
+    //private int numberGuess = 4;
+    //private string? imageSource = $"images/4.jpg";
+
+
+    private string currentWord = "foo";
+
+    //on guess letter button press call this function
+    private void GuessLetter() {
+
+        //GET GUESSED LETTER FROM MUDBLAZOR INPUTFIELD
+
+        //if (currentWord.contains(guessedCharacter)) {
+            //guess was in answer
+        //} else {
+            //guess was not in answer
+            IncrementGuess();
+        //}
+    }
+
+    private void IncrementGuess() {
+        numberGuess++;
+
+        //check if the game is over
+        if(numberGuess > 10) {
+            //the game was lost
+        } else {
+            ShowImage(numberGuess);
+        }
+    }
+
+    private void ShowImage(int id) {
+        imageSource = $"images/{id}.jpg";
+    }
 }
+
