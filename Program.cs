@@ -10,7 +10,6 @@ builder.Services.AddDbContextFactory<HangmanDb>();
 builder.Services.AddRazorPages();
 builder.Services.AddMudServices();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 
 var app = builder.Build();
 

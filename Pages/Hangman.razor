@@ -1,16 +1,23 @@
 ﻿@page "/hangman"
 
 <PageTitle>Hangman!</PageTitle>
-<h1>Hangman</h1>
 
-@if (imageSource is not null) {
-    <div>
-        <img src="@imageSource" />
-    </div>
-}
 
-<div>INSERT MUDBLAZOR INPUTFIELD HERE</div>
-<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="GuessLetter">Guess Letter!</MudButton>
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper>
+            <MudForm>
+                    <h1 style="text-align:center">Hangman</h1>
+                    <img style="padding: 25px; display: block; margin-left: auto; margin-right: auto; width: 50%;" src="@imageSource" />
+                    <MudTextField style="display: block; margin-left: auto; margin-right: auto;" T="string" Label="Guess a letter" Required="true" RequiredError="Letter is required!"/>
+            </MudForm>   
+        </MudPaper>
+        <MudPaper>
+            <MudButton Variant="Variant.Filled" style="padding:15px; display: block; margin-left: auto; margin-right: auto;" Color="Color.Primary" DisableElevation="true" OnClick="IncrementGuess">Submit!</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 @code {
     //should we start on 0.jpg? or should the first guess draw the head?
@@ -18,8 +25,7 @@
     private string? imageSource = $"images/0.jpg";
     //private int numberGuess = 4;
     //private string? imageSource = $"images/4.jpg";
-
-
+    
     private string currentWord = "foo";
 
     //on guess letter button press call this function
@@ -49,5 +55,7 @@
     private void ShowImage(int id) {
         imageSource = $"images/{id}.jpg";
     }
+
 }
+
 
