@@ -14,4 +14,5 @@ public class HangmanDb : DbContext
         => options.UseSqlite($"Data Source={DbPath}");
     
     public  DbSet<Highscore> Highscores { get; set; } 
+    public  DbSet<Word> Words { get; set; } 
 }
