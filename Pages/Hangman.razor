@@ -1,44 +1,65 @@
 ﻿@page "/hangman"
+@inject IJSRuntime jsRuntime
 
 <PageTitle>Hangman!</PageTitle>
 
-
-
 <MudGrid>
-    <MudItem xs="12" sm="7">
+    <MudItem xs="12" sm="9">
         <MudPaper>
-            <MudForm>
-                    <h1 style="text-align:center">Hangman</h1>
-                    <img style="padding: 25px; display: block; margin-left: auto; margin-right: auto; width: 50%;" src="@imageSource" />
-                    <MudTextField style="display: block; margin-left: auto; margin-right: auto;" T="string" Label="Guess a letter" Required="true" RequiredError="Letter is required!"/>
+            <MudForm style="padding: 25px;">
+                    <h1 style="text-align:center">Welcome to the Hangman Game!</h1>
+                    <img id="imageGame" style="display:none;" src="@imageSource" />
+                    <p id="descriptionGame" style="padding:25px; text-align:center;">Hangman is an old school favorite, a word game where the goal is simply to find the missing word or words. 
+                      You will be presented with a number of blank spaces representing the missing letters you need to find. <br /> Use the keyboard to guess a letter (I recommend starting with vowels). 
+                      If your chosen letter exists in the answer, then all places in the answer where that letter appear will be revealed. <br /> After you've revealed several letters, you may be able to guess what the answer 
+                      is and fill in the remaining letters. Be warned, every time you guess a letter wrong you loose a life and the hangman begins to appear, piece by piece. <br />Solve the puzzle before the hangman dies.
+                    </p>
+                    <MudField id="numberToGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">@underlines</MudField>  
+                    <MudField id="prompt" Variant="Variant.Text" style="display:none;" DisableUnderLine="true">Enter Letter: </MudField>  
+                    <MudItem xs="1" sm="1" style="display:none;" id="userletterDiv">            
+                        <MudTextField id="userLetter" Variant="Variant.Text" @bind-Value="letter" MaxLength="1"></MudTextField>  
+                    </MudItem>
+                    <MudButton id="startGame" Variant="Variant.Filled" style="padding:10px; margin-left: auto; margin-right: auto; display:block" Color="Color.Primary" DisableElevation="true" OnClick="StartGame">Start!</MudButton>
+                    <MudButton id="submitLetter" Variant="Variant.Filled" style="display:none;" Color="Color.Primary" DisableElevation="true" OnClick="GuessLetter">Submit!</MudButton>                  
             </MudForm>   
-        </MudPaper>
-        <MudPaper>
-            <MudButton Variant="Variant.Filled" style="padding:15px; display: block; margin-left: auto; margin-right: auto;" Color="Color.Primary" DisableElevation="true" OnClick="IncrementGuess">Submit!</MudButton>
         </MudPaper>
     </MudItem>
 </MudGrid>
 
+
+
+@* I WILL EXPLAIN WHAT I ADDED TO THIS PAGE NEXT TIME IN CLASS - NUDIST_WHALE :) *@
+
+
 @code {
-    //should we start on 0.jpg? or should the first guess draw the head?
     private int numberGuess = 0;
     private string? imageSource = $"images/0.jpg";
-    //private int numberGuess = 4;
-    //private string? imageSource = $"images/4.jpg";
-    
-    private string currentWord = "foo";
+    private string letter { get; set; } = "";
+    private string underlines = "";
 
-    //on guess letter button press call this function
-    private void GuessLetter() {
+    private string currentWord = "foo"; //Have to change current word with the word from the database
 
+    private async void StartGame()
+    {
+        await jsRuntime.InvokeAsync<object>("accessDOMElement");
+
+        foreach (var character in currentWord)
+        {
+                underlines += " _ "; //Works but underline is being displayed after the Sumbit! button gets clicked, not when the game is loaded. 
+        }
+
+    }
+
+    //IT SHOULD WORK 
+    private void GuessLetter() 
+    {
         //GET GUESSED LETTER FROM MUDBLAZOR INPUTFIELD
-
-        //if (currentWord.contains(guessedCharacter)) {
-            //guess was in answer
-        //} else {
+        if (currentWord.Contains(letter)) {
+            return;
+        } else {
             //guess was not in answer
-            IncrementGuess();
-        //}
+            IncrementGuess(); 
+        }
     }
 
     private void IncrementGuess() {
@@ -57,5 +78,6 @@
     }
 
 }
+
 
 
