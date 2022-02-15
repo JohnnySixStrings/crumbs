@@ -25,29 +25,53 @@ else
             <MudTablePager PageSizeOptions="new int[]{50, 100}" />
         </PagerContent>
     </MudTable>
+    <p>
+        @Words
+    </p>
 }
 
 @code {
     List<Highscore> TopScorers = new List<Highscore>();
-    private HangmanDb HangmanDbContest { get; set; }
+    private HangmanDb HangmanDbContext { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        HangmanDbContest = await DbFactory.CreateDbContextAsync();
+        HangmanDbContext = await DbFactory.CreateDbContextAsync();
         IQueryable<Highscore> query2 =
-            HangmanDbContest.Highscores
+            HangmanDbContext.Highscores
                 .OrderBy(s => s.Score)
                 .Take(10);
-        var query = HangmanDbContest.Highscores
+        var query = HangmanDbContext.Highscores
             .OrderByDescending(s => s.Score)
             .Take(10);
         
         TopScorers = query
             .ToList();
         await base.OnInitializedAsync();
+        Console.WriteLine("I wrote to the terminal");
     }
     public void Dispose()
     {
-        HangmanDbContest?.Dispose();
+        HangmanDbContext?.Dispose();
+    }
+    
+    public string Words = @"children,fellow,piano,account,attempt,perfectly,taken,not,everything,future,trace,eager,paid,shop,determine,blanket,wing,setting,sign,nearest
+day,before,adventure,completely,does,right,ourselves,remarkable,poet,vessels,vapor,lift,believed,dug,water,written,feel,yet,not,his
+fell,simply,atom,secret,package,repeat,aside,solution,studying,funny,night,post,bill,laid,army,note,clock,successful,nor,union
+cream,object,jungle,sell,particular,concerned,create,rough,nobody,waste,help,action,floating,arrow,country,recently,broke,arrow,skill,dry
+wild,rays,scientific,remain,audience,touch,mother,recently,graph,goose,completely,love,laugh,principal,circle,basis,though,model,control,date
+red,fear,function,open,list,not,move,business,printed,history,drove,headed,fourth,salmon,cell,medicine,did,beside,clothing,forgotten
+compound,model,wind,cage,closely,sense,smell,thrown,continued,building,grown,sit,poetry,sight,noise,whose,piano,giving,peace,buffalo";
+
+    public void WordsParse()
+    {
+        var splitWordList= Words.Split(',').ToList();
+        List<Word> toBeStored = new List<Word>();
+        foreach (var word in splitWordList)
+        {
+            toBeStored.Add(new Word(){ WordString = word});
+        }
+        HangmanDbContext.Words.AddRange(toBeStored);
+        HangmanDbContext.SaveChanges();
     }
 }
