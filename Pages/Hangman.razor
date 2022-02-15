@@ -1,5 +1,10 @@
 ﻿@page "/hangman"
+@using Microsoft.EntityFrameworkCore
+@using crumbs.Data
+@implements IDisposable
+
 @inject IJSRuntime jsRuntime
+@inject IDbContextFactory<HangmanDb> DbFactory
 
 <PageTitle>Hangman!</PageTitle>
 
@@ -34,28 +39,42 @@
 @code {
     private int numberGuess = 0;
     private string? imageSource = $"images/0.jpg";
-    private string letter { get; set; } = "";
+    private string letter { get; set; }
     private string underlines = "";
-
+    private HangmanDb HangmanDbContext {get; set;}
     private string currentWord = "foo"; //Have to change current word with the word from the database
 
     private async void StartGame()
     {
         await jsRuntime.InvokeAsync<object>("accessDOMElement");
-
-        foreach (var character in currentWord)
-        {
-                underlines += " _ "; //Works but underline is being displayed after the Sumbit! button gets clicked, not when the game is loaded. 
-        }
-
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        HangmanDbContext = await DbFactory.CreateDbContextAsync();
+        underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
+    }
     //IT SHOULD WORK 
     private void GuessLetter() 
     {
         //GET GUESSED LETTER FROM MUDBLAZOR INPUTFIELD
-        if (currentWord.Contains(letter)) {
-            return;
+        if (currentWord.Contains(letter, StringComparison.CurrentCultureIgnoreCase)) {
+            int position = 0;
+            var replacement = underlines.ToCharArray();
+            while (true)
+            {
+                position = currentWord.IndexOf(letter, position, StringComparison.CurrentCultureIgnoreCase);
+                if (position > -1)
+                {
+                    replacement[1 + (3 * position)] = char.Parse(letter);
+                }
+                else
+                {
+                    break;
+                }
+                position++;
+            }
+            underlines = string.Join("",replacement);
         } else {
             //guess was not in answer
             IncrementGuess(); 
@@ -75,6 +94,11 @@
 
     private void ShowImage(int id) {
         imageSource = $"images/{id}.jpg";
+    }
+    
+    public void Dispose()
+    {
+        HangmanDbContext?.Dispose();
     }
 
 }

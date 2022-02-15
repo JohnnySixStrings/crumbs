@@ -29,16 +29,16 @@ else
 
 @code {
     List<Highscore> TopScorers = new List<Highscore>();
-    private HangmanDb HangmanDbContest { get; set; }
+    private HangmanDb HangmanDbContext { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        HangmanDbContest = await DbFactory.CreateDbContextAsync();
+        HangmanDbContext = await DbFactory.CreateDbContextAsync();
         IQueryable<Highscore> query2 =
-            HangmanDbContest.Highscores
+            HangmanDbContext.Highscores
                 .OrderBy(s => s.Score)
                 .Take(10);
-        var query = HangmanDbContest.Highscores
+        var query = HangmanDbContext.Highscores
             .OrderByDescending(s => s.Score)
             .Take(10);
         
@@ -48,6 +48,6 @@ else
     }
     public void Dispose()
     {
-        HangmanDbContest?.Dispose();
+        HangmanDbContext?.Dispose();
     }
 }

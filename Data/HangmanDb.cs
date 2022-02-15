@@ -12,7 +12,7 @@ public class HangmanDb : DbContext
     }
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite($"Data Source={DbPath}");
-    
-    public  DbSet<Highscore> Highscores { get; set; } 
-    public  DbSet<Word> Words { get; set; } 
+
+    public DbSet<Highscore> Highscores { get; set; }
+    public DbSet<Word> Words { get; set; }
 }
