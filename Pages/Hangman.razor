@@ -57,12 +57,22 @@
     private string letter { get; set; }
     private string underlines = "";
     private HangmanDb HangmanDbContext {get; set;}
-    private string currentWord = "foo"; //Have to change current word with the word from the database
+    private Word[] wordArr;
+    private string currentWord; // = "foo"; //Have to change current word with the word from the database
     private char[] prevGuesses = new char[26];
-
+    private Random rnd = new Random();
+    
     private async void StartGame()
     {
         await jsRuntime.InvokeAsync<object>("accessDOMElement");
+        WordsParse();
+        SetWord();
+    }
+
+    private void SetWord(){
+        wordArr = HangmanDbContext.Words.ToArray();
+        int index = rnd.Next(0, 199);
+        currentWord = wordArr[index].WordString;
     }
 
     protected override async Task OnInitializedAsync()
@@ -117,6 +127,26 @@
         HangmanDbContext?.Dispose();
     }
 
+
+    public string Words = @"children,fellow,piano,account,attempt,perfectly,taken,not,everything,future,trace,eager,paid,shop,determine,blanket,wing,setting,sign,nearest
+    day,before,adventure,completely,does,right,ourselves,remarkable,poet,vessels,vapor,lift,believed,dug,water,written,feel,yet,not,his
+    fell,simply,atom,secret,package,repeat,aside,solution,studying,funny,night,post,bill,laid,army,note,clock,successful,nor,union
+    cream,object,jungle,sell,particular,concerned,create,rough,nobody,waste,help,action,floating,arrow,country,recently,broke,arrow,skill,dry
+    wild,rays,scientific,remain,audience,touch,mother,recently,graph,goose,completely,love,laugh,principal,circle,basis,though,model,control,date
+    red,fear,function,open,list,not,move,business,printed,history,drove,headed,fourth,salmon,cell,medicine,did,beside,clothing,forgotten
+    compound,model,wind,cage,closely,sense,smell,thrown,continued,building,grown,sit,poetry,sight,noise,whose,piano,giving,peace,buffalo";
+
+    public void WordsParse()
+    {
+        var splitWordList= Words.Split(',').ToList();
+        List<Word> toBeStored = new List<Word>();
+        foreach (var word in splitWordList)
+        {
+            toBeStored.Add(new Word(){ WordString = word});
+        }
+        HangmanDbContext.Words.AddRange(toBeStored);
+        HangmanDbContext.SaveChanges();
+    }
 }
 
 
