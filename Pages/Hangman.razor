@@ -65,20 +65,20 @@
     private async void StartGame()
     {
         await jsRuntime.InvokeAsync<object>("accessDOMElement");
-        WordsParse();
-        SetWord();
     }
 
     private void SetWord(){
         wordArr = HangmanDbContext.Words.ToArray();
         int index = rnd.Next(0, 199);
         currentWord = wordArr[index].WordString;
+        underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
     }
 
     protected override async Task OnInitializedAsync()
     {
         HangmanDbContext = await DbFactory.CreateDbContextAsync();
-        underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
+        WordsParse();
+        SetWord();
     }
     //IT SHOULD WORK 
     private void GuessLetter() 
