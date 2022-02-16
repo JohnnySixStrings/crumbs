@@ -17,7 +17,7 @@
                     <p id="descriptionGame" style="padding:25px; text-align:center;">Hangman is an old school favorite, a word game where the goal is simply to find the missing word or words. 
                       You will be presented with a number of blank spaces representing the missing letters you need to find. <br /> Use the keyboard to guess a letter (I recommend starting with vowels). 
                       If your chosen letter exists in the answer, then all places in the answer where that letter appear will be revealed. <br /> After you've revealed several letters, you may be able to guess what the answer 
-                      is and fill in the remaining letters. Be warned, every time you guess a letter wrong you loose a life and the hangman begins to appear, piece by piece. <br />Solve the puzzle before the hangman dies.
+                      is and fill in the remaining letters. Be warned, every time you guess a letter wrong you lose a life and the hangman begins to appear, piece by piece. <br />Solve the puzzle before the hangman dies.
                     </p>
                     <MudField id="numberToGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">@underlines</MudField>  
                     <MudField id="prompt" Variant="Variant.Text" style="display:none;" DisableUnderLine="true">Enter Letter: </MudField>  
@@ -34,15 +34,31 @@
 
 
 @* I WILL EXPLAIN WHAT I ADDED TO THIS PAGE NEXT TIME IN CLASS - NUDIST_WHALE :) *@
+@* Sounds great! :) - vitus *@
+
 
 
 @code {
+
+    // TO DO:
+    //      Generate goal word from db
+    //      Force input to be alphabetic, non-numeric non-symbolic
+    //      Losing
+    //          ending the game/disallowing more guesses when user loses
+    //      Winning
+    //          ending the game when the word is guessed
+    //          adding to the highscore table
+    //      Previous guess bank? 
+    //          Disallow re-guessing letters?
+    //          Display the prev guesses?
+
     private int numberGuess = 0;
     private string? imageSource = $"images/0.jpg";
     private string letter { get; set; }
     private string underlines = "";
     private HangmanDb HangmanDbContext {get; set;}
     private string currentWord = "foo"; //Have to change current word with the word from the database
+    private char[] prevGuesses = new char[26];
 
     private async void StartGame()
     {
