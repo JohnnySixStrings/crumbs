@@ -1,38 +1,84 @@
 ﻿@page "/hangman"
+@using Microsoft.EntityFrameworkCore
+@using crumbs.Data
+@implements IDisposable
+
+@inject IJSRuntime jsRuntime
+@inject IDbContextFactory<HangmanDb> DbFactory
 
 <PageTitle>Hangman!</PageTitle>
-<h1>Hangman</h1>
 
-@if (imageSource is not null) {
-    <div>
-        <img src="@imageSource" />
-    </div>
-}
+<MudGrid>
+    <MudItem xs="12" sm="9">
+        <MudPaper>
+            <MudForm style="padding: 25px;">
+                    <h1 style="text-align:center">Welcome to the Hangman Game!</h1>
+                    <img id="imageGame" style="display:none;" src="@imageSource" />
+                    <p id="descriptionGame" style="padding:25px; text-align:center;">Hangman is an old school favorite, a word game where the goal is simply to find the missing word or words. 
+                      You will be presented with a number of blank spaces representing the missing letters you need to find. <br /> Use the keyboard to guess a letter (I recommend starting with vowels). 
+                      If your chosen letter exists in the answer, then all places in the answer where that letter appear will be revealed. <br /> After you've revealed several letters, you may be able to guess what the answer 
+                      is and fill in the remaining letters. Be warned, every time you guess a letter wrong you loose a life and the hangman begins to appear, piece by piece. <br />Solve the puzzle before the hangman dies.
+                    </p>
+                    <MudField id="numberToGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">@underlines</MudField>  
+                    <MudField id="prompt" Variant="Variant.Text" style="display:none;" DisableUnderLine="true">Enter Letter: </MudField>  
+                    <MudItem xs="1" sm="1" style="display:none;" id="userletterDiv">            
+                        <MudTextField id="userLetter" Variant="Variant.Text" @bind-Value="letter" MaxLength="1"></MudTextField>  
+                    </MudItem>
+                    <MudButton id="startGame" Variant="Variant.Filled" style="padding:10px; margin-left: auto; margin-right: auto; display:block" Color="Color.Primary" DisableElevation="true" OnClick="StartGame">Start!</MudButton>
+                    <MudButton id="submitLetter" Variant="Variant.Filled" style="display:none;" Color="Color.Primary" DisableElevation="true" OnClick="GuessLetter">Submit!</MudButton>                  
+            </MudForm>   
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
-<div>INSERT MUDBLAZOR INPUTFIELD HERE</div>
-<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="GuessLetter">Guess Letter!</MudButton>
+
+
+@* I WILL EXPLAIN WHAT I ADDED TO THIS PAGE NEXT TIME IN CLASS - NUDIST_WHALE :) *@
+
 
 @code {
-    //should we start on 0.jpg? or should the first guess draw the head?
     private int numberGuess = 0;
     private string? imageSource = $"images/0.jpg";
-    //private int numberGuess = 4;
-    //private string? imageSource = $"images/4.jpg";
+    private string letter { get; set; }
+    private string underlines = "";
+    private HangmanDb HangmanDbContext {get; set;}
+    private string currentWord = "foo"; //Have to change current word with the word from the database
 
+    private async void StartGame()
+    {
+        await jsRuntime.InvokeAsync<object>("accessDOMElement");
+    }
 
-    private string currentWord = "foo";
-
-    //on guess letter button press call this function
-    private void GuessLetter() {
-
+    protected override async Task OnInitializedAsync()
+    {
+        HangmanDbContext = await DbFactory.CreateDbContextAsync();
+        underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
+    }
+    //IT SHOULD WORK 
+    private void GuessLetter() 
+    {
         //GET GUESSED LETTER FROM MUDBLAZOR INPUTFIELD
-
-        //if (currentWord.contains(guessedCharacter)) {
-            //guess was in answer
-        //} else {
+        if (currentWord.Contains(letter, StringComparison.CurrentCultureIgnoreCase)) {
+            int position = 0;
+            var replacement = underlines.ToCharArray();
+            while (true)
+            {
+                position = currentWord.IndexOf(letter, position, StringComparison.CurrentCultureIgnoreCase);
+                if (position > -1)
+                {
+                    replacement[1 + (3 * position)] = char.Parse(letter);
+                }
+                else
+                {
+                    break;
+                }
+                position++;
+            }
+            underlines = string.Join("",replacement);
+        } else {
             //guess was not in answer
-            IncrementGuess();
-        //}
+            IncrementGuess(); 
+        }
     }
 
     private void IncrementGuess() {
@@ -49,5 +95,13 @@
     private void ShowImage(int id) {
         imageSource = $"images/{id}.jpg";
     }
+    
+    public void Dispose()
+    {
+        HangmanDbContext?.Dispose();
+    }
+
 }
+
+
 
