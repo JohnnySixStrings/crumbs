@@ -112,7 +112,8 @@
 
         //check if the game is over
         if(numberGuess > 10) {
-            //the game was lost
+            numberGuess++;
+            ShowImage(numberGuess);
         } else {
             ShowImage(numberGuess);
         }
