@@ -19,17 +19,27 @@
                       If your chosen letter exists in the answer, then all places in the answer where that letter appear will be revealed. <br /> After you've revealed several letters, you may be able to guess what the answer 
                       is and fill in the remaining letters. Be warned, every time you guess a letter wrong you lose a life and the hangman begins to appear, piece by piece. <br />Solve the puzzle before the hangman dies.
                     </p>
-                    <MudField id="numberToGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">@underlines</MudField>  
+                    <MudField id="incorrectGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">Incorrect Letters<br> @wrongletters</MudField>
+                    <MudField id="numberToGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">@underlines</MudField>
                     <MudField id="prompt" Variant="Variant.Text" style="display:none;" DisableUnderLine="true">Enter Letter: </MudField>  
                     <MudItem xs="1" sm="1" style="display:none;" id="userletterDiv">            
                         <MudTextField id="userLetter" @bind-Value="letter" Variant="Variant.Text" MaxLength="1"></MudTextField>  
                     </MudItem>
                     <MudButton id="startGame" Variant="Variant.Filled" style="padding:10px; margin-left: auto; margin-right: auto; display:block" Color="Color.Primary" DisableElevation="true" OnClick="StartGame">Start!</MudButton>
-                    <MudButton id="submitLetter" Variant="Variant.Filled" style="display:none;" Color="Color.Primary" DisableElevation="true" OnClick="GuessLetter">Submit!</MudButton>                  
+                    <MudButton id="submitLetter" Variant="Variant.Filled" style="display:none;" Color="Color.Primary" DisableElevation="true" OnClick="GuessLetter">Submit!</MudButton>   
             </MudForm>   
         </MudPaper>
     </MudItem>
 </MudGrid>
+
+                   
+
+
+
+@* I WILL EXPLAIN WHAT I ADDED TO THIS PAGE NEXT TIME IN CLASS - NUDIST_WHALE :) *@
+@* Sounds great! :) - vitus *@
+
+
 
 @code {
 
@@ -49,19 +59,31 @@
     private string? imageSource = $"images/0.jpg";
     private string letter { get; set; }
     private string underlines = "";
+    private string wrongletters = "";
     private HangmanDb HangmanDbContext {get; set;}
-    private string currentWord = "foo"; //Have to change current word with the word from the database
-    private char[] prevGuesses = new char[26];
+    private Word[] wordArr;
+    private string currentWord; // = "foo"; //Have to change current word with the word from the database
+    private Random rnd = new Random();
+    private List<char> prevGuesses = new List<char>();
+
 
     private async void StartGame()
     {
         await jsRuntime.InvokeAsync<object>("accessDOMElement");
     }
 
+    private void SetWord(){
+        wordArr = HangmanDbContext.Words.ToArray();
+        int index = rnd.Next(0, 199);
+        currentWord = wordArr[index].WordString;
+        underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
+    }
+
     protected override async Task OnInitializedAsync()
     {
         HangmanDbContext = await DbFactory.CreateDbContextAsync();
-        underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
+        WordsParse();
+        SetWord();
     }
 
    //string InputContent
@@ -76,12 +98,14 @@
    // }*/
 
     private void GuessLetter() 
-    {  
+    {
+        prevGuesses.Add(char.Parse(letter));
+
         if (currentWord.Contains(letter, StringComparison.CurrentCultureIgnoreCase)) {
             int position = 0;
             var replacement = underlines.ToCharArray();
-            while (true)
-            {
+
+            while (true) {
                 position = currentWord.IndexOf(letter, position, StringComparison.CurrentCultureIgnoreCase);
                 if (position > -1)
                 {
@@ -94,7 +118,10 @@
                 position++;
             }
             underlines = string.Join("",replacement);
+
         } else {
+            //guess was not in answer
+            wrongletters = string.Join(" ", prevGuesses);
             IncrementGuess(); 
         }      
     }
@@ -104,6 +131,8 @@
         numberGuess++;
 
         if(numberGuess > 10) {
+            numberGuess++;
+            ShowImage(numberGuess);
         } else {
             ShowImage(numberGuess);
         }
@@ -118,6 +147,26 @@
         HangmanDbContext?.Dispose();
     }
 
+
+    public string Words = @"children,fellow,piano,account,attempt,perfectly,taken,not,everything,future,trace,eager,paid,shop,determine,blanket,wing,setting,sign,nearest
+    day,before,adventure,completely,does,right,ourselves,remarkable,poet,vessels,vapor,lift,believed,dug,water,written,feel,yet,not,his
+    fell,simply,atom,secret,package,repeat,aside,solution,studying,funny,night,post,bill,laid,army,note,clock,successful,nor,union
+    cream,object,jungle,sell,particular,concerned,create,rough,nobody,waste,help,action,floating,arrow,country,recently,broke,arrow,skill,dry
+    wild,rays,scientific,remain,audience,touch,mother,recently,graph,goose,completely,love,laugh,principal,circle,basis,though,model,control,date
+    red,fear,function,open,list,not,move,business,printed,history,drove,headed,fourth,salmon,cell,medicine,did,beside,clothing,forgotten
+    compound,model,wind,cage,closely,sense,smell,thrown,continued,building,grown,sit,poetry,sight,noise,whose,piano,giving,peace,buffalo";
+
+    public void WordsParse()
+    {
+        var splitWordList= Words.Split(',').ToList();
+        List<Word> toBeStored = new List<Word>();
+        foreach (var word in splitWordList)
+        {
+            toBeStored.Add(new Word(){ WordString = word});
+        }
+        HangmanDbContext.Words.AddRange(toBeStored);
+        HangmanDbContext.SaveChanges();
+    }
 }
 
 
