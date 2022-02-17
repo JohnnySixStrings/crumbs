@@ -22,7 +22,7 @@
                     <MudField id="numberToGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">@underlines</MudField>  
                     <MudField id="prompt" Variant="Variant.Text" style="display:none;" DisableUnderLine="true">Enter Letter: </MudField>  
                     <MudItem xs="1" sm="1" style="display:none;" id="userletterDiv">            
-                        <MudTextField id="userLetter" Variant="Variant.Text" @bind-Value="letter" MaxLength="1"></MudTextField>  
+                        <MudTextField id="userLetter" @bind-Value="letter" Variant="Variant.Text" MaxLength="1"></MudTextField>  
                     </MudItem>
                     <MudButton id="startGame" Variant="Variant.Filled" style="padding:10px; margin-left: auto; margin-right: auto; display:block" Color="Color.Primary" DisableElevation="true" OnClick="StartGame">Start!</MudButton>
                     <MudButton id="submitLetter" Variant="Variant.Filled" style="display:none;" Color="Color.Primary" DisableElevation="true" OnClick="GuessLetter">Submit!</MudButton>                  
@@ -30,13 +30,6 @@
         </MudPaper>
     </MudItem>
 </MudGrid>
-
-
-
-@* I WILL EXPLAIN WHAT I ADDED TO THIS PAGE NEXT TIME IN CLASS - NUDIST_WHALE :) *@
-@* Sounds great! :) - vitus *@
-
-
 
 @code {
 
@@ -70,10 +63,20 @@
         HangmanDbContext = await DbFactory.CreateDbContextAsync();
         underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
     }
-    //IT SHOULD WORK 
+
+   //string InputContent
+   // {
+   //    get => letter;
+   //    set => letter = StripNonDigits(value);
+   //}
+   //
+   // string StripNonDigits(string str)
+   // {
+   //     return new String(str.Where(c => char.IsDigit(c)).ToArray());
+   // }*/
+
     private void GuessLetter() 
-    {
-        //GET GUESSED LETTER FROM MUDBLAZOR INPUTFIELD
+    {  
         if (currentWord.Contains(letter, StringComparison.CurrentCultureIgnoreCase)) {
             int position = 0;
             var replacement = underlines.ToCharArray();
@@ -92,17 +95,15 @@
             }
             underlines = string.Join("",replacement);
         } else {
-            //guess was not in answer
             IncrementGuess(); 
-        }
+        }      
     }
 
     private void IncrementGuess() {
+
         numberGuess++;
 
-        //check if the game is over
         if(numberGuess > 10) {
-            //the game was lost
         } else {
             ShowImage(numberGuess);
         }
