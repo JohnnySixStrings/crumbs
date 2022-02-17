@@ -3,7 +3,7 @@
 @using Microsoft.EntityFrameworkCore
 @implements IDisposable
 
-@inject IDbContextFactory<HangmanDb> DbFactory
+@inject IDbContextFactory<HangmanDbContext> DbFactory
 <h3>Highscore</h3>
 
 @if (TopScorers == null)
@@ -29,16 +29,16 @@ else
 
 @code {
     List<Highscore> TopScorers = new List<Highscore>();
-    private HangmanDb HangmanDbContext { get; set; }
+    private HangmanDbContext HangmanDb { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        HangmanDbContext = await DbFactory.CreateDbContextAsync();
+        HangmanDb = await DbFactory.CreateDbContextAsync();
         IQueryable<Highscore> query2 =
-            HangmanDbContext.Highscores
+            HangmanDb.Highscores
                 .OrderBy(s => s.Score)
                 .Take(10);
-        var query = HangmanDbContext.Highscores
+        var query = HangmanDb.Highscores
             .OrderByDescending(s => s.Score)
             .Take(10);
         
@@ -49,6 +49,6 @@ else
     }
     public void Dispose()
     {
-        HangmanDbContext?.Dispose();
+        HangmanDb?.Dispose();
     }
 }

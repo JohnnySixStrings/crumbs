@@ -4,7 +4,7 @@
 @implements IDisposable
 
 @inject IJSRuntime jsRuntime
-@inject IDbContextFactory<HangmanDb> DbFactory
+@inject IDbContextFactory<HangmanDbContext> DbFactory
 
 <PageTitle>Hangman!</PageTitle>
 
@@ -58,7 +58,7 @@
     private string letter { get; set; }
     private string underlines = "";
     private string wrongletters = "";
-    private HangmanDb HangmanDbContext {get; set;}
+    private HangmanDbContext HangmanDb {get; set;}
     private Word[] wordArr;
     private string currentWord; // = "foo"; //Have to change current word with the word from the database
     private Random rnd = new Random();
@@ -71,7 +71,7 @@
     }
 
     private void SetWord(){
-        wordArr = HangmanDbContext.Words.ToArray();
+        wordArr = HangmanDb.Words.ToArray();
         int index = rnd.Next(0, 199);
         currentWord = wordArr[index].WordString;
         underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
@@ -79,8 +79,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        HangmanDbContext = await DbFactory.CreateDbContextAsync();
-        WordsParse();
+        HangmanDb = await DbFactory.CreateDbContextAsync();
+        //WordsParse();
         SetWord();
     }
 
@@ -144,7 +144,7 @@
     
     public void Dispose()
     {
-        HangmanDbContext?.Dispose();
+        HangmanDb?.Dispose();
     }
 
 
@@ -164,8 +164,8 @@
         {
             toBeStored.Add(new Word(){ WordString = word});
         }
-        HangmanDbContext.Words.AddRange(toBeStored);
-        HangmanDbContext.SaveChanges();
+        HangmanDb.Words.AddRange(toBeStored);
+        HangmanDb.SaveChanges();
     }
 }
 

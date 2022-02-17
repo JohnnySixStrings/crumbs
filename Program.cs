@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("IdentityConnection");builder.Services.AddDbContext<Identity>(options =>
-    options.UseSqlite(connectionString));builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+var connectionString = builder.Configuration.GetConnectionString("IdentityConnection");
+
+builder.Services.AddDbContext<Identity>(options => options.UseSqlite(connectionString));
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<Identity>();
+builder.Services.AddOptions();
+builder.Services.AddAuthorizationCore();
 // Add services to the container.
-builder.Services.AddDbContextFactory<HangmanDb>();
+builder.Services.AddDbContextFactory<HangmanDbContext>( options=> options.UseSqlite(connectionString));
 builder.Services.AddRazorPages();
 builder.Services.AddMudServices();
 builder.Services.AddServerSideBlazor();
@@ -31,8 +35,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
-var hangmanDb = new HangmanDb();
-hangmanDb.Database.EnsureCreated();
+app.MapFallbackToPage("/_Host");;
 app.Run();
