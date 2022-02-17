@@ -3,4 +3,17 @@
 <PageTitle>Index</PageTitle>
 <h1>Hello!</h1>
 
-Welcome to the Crumbs Hangman game. Login below!
+<p>Welcome to the Crumbs Hangman game! </p>
+<br/>
+
+
+ <AuthorizeView>
+    <NotAuthorized>
+        Login
+        <MudIconButton Icon="@Icons.Filled.Login" Link="/Identity/Account/Login"/>
+    </NotAuthorized>
+    <Authorized>
+        Logout
+        <MudIconButton Icon="@Icons.Filled.Logout" Link="/Identity/Account/Logout"/>
+    </Authorized>
+ </AuthorizeView>
