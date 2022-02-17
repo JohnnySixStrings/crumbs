@@ -15,6 +15,9 @@ function accessDOMElement(){
 
     btn = document.getElementById('descriptionGame');
     btn.style = "display:none";
+
+    btn = document.getElementById('newGame');
+    btn.style = "display:none";
     
     btn = document.getElementById('submitLetter');
     btn.style = "display:block; padding:10px; margin-left: auto; margin-right: auto; margin-top: 25px;";
@@ -36,6 +39,40 @@ function accessDOMElement(){
 
     btn = document.getElementById('userletterDiv');
     btn.style = "display:block; margin-left: auto; margin-right: auto;";
+}
+
+function endGameScreen(){
+    var btn;
+    // access DOM here
+    btn = document.getElementById('startGame');
+    btn.style = "display:none";
+
+    btn = document.getElementById('descriptionGame');
+    btn.style = "display:none";
+    
+    btn = document.getElementById('submitLetter');
+    btn.style = "display:none";
+
+    btn = document.getElementById('imageGame');
+    btn.style = "display:block; padding:10px; margin-left: auto; margin-right: auto; width: 30%;";
+
+    btn = document.getElementById('numberToGuess');
+    btn.style = "font-size:180%; text-align: center; display:block; margin-left: auto; margin-right: auto; width: 50%;";
+
+    btn = document.getElementById('incorrectGuess');
+    btn.style = "display:none";
+
+    btn = document.getElementById('userLetter');
+    btn.style = "display:none";
+
+    btn = document.getElementById('prompt');
+    btn.style = "display:none";
+
+    btn = document.getElementById('userletterDiv');
+    btn.style = "display:block; margin-left: auto; margin-right: auto;";
+
+    btn = document.getElementById('newGame');
+    btn.style = "display:block; padding:10px; margin-left: auto; margin-right: auto; margin-top: 25px;";
 }
 </script>
 <component type="typeof(App)" render-mode="ServerPrerendered" />
