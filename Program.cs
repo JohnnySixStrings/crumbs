@@ -2,9 +2,13 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using crumbs.Data;
 using MudBlazor.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var connectionString = builder.Configuration.GetConnectionString("IdentityConnection");builder.Services.AddDbContext<Identity>(options =>
+    options.UseSqlite(connectionString));builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<Identity>();
 // Add services to the container.
 builder.Services.AddDbContextFactory<HangmanDb>();
 builder.Services.AddRazorPages();
@@ -26,7 +30,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 var hangmanDb = new HangmanDb();

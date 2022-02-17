@@ -97,7 +97,8 @@
 
     private void GuessLetter() 
     {
-        if(string.IsNullOrEmpty()|| int.TryParse(letter, out _ )) return;
+        if(string.IsNullOrEmpty(letter)|| int.TryParse(letter, out _ )) return;
+        
         prevGuesses.Add(char.Parse(letter));
 
         if (currentWord.Contains(letter, StringComparison.CurrentCultureIgnoreCase)) {
