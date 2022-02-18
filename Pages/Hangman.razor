@@ -3,6 +3,7 @@
 @using crumbs.Data
 @implements IDisposable
 
+
 @inject IJSRuntime jsRuntime
 @inject IDbContextFactory<HangmanDbContext> DbFactory
 @inject NavigationManager NavManager
@@ -19,6 +20,10 @@
                       If your chosen letter exists in the answer, then all places in the answer where that letter appear will be revealed. <br /> After you've revealed several letters, you may be able to guess what the answer 
                       is and fill in the remaining letters. Be warned, every time you guess a letter wrong you lose a life and the hangman begins to appear, piece by piece. <br />Solve the puzzle before the hangman dies.
                     </p>
+
+                    <MudItem xs="1" sm="1" style="display:none;" id="counterDiv">
+                        <MudField id="counter" FullWidth="true" Variant="Variant.Text" style="display:none;">@counter</MudField>
+                    </MudItem>
                     <MudField id="numberToGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">@underlines</MudField>
                     <MudField id="incorrectGuess" FullWidth="true" Variant="Variant.Text" style="display:none;">Incorrect Letters<br> @wrongletters</MudField>
                     <MudField id="prompt" Variant="Variant.Text" style="display:none;" DisableUnderLine="true">Enter Letter: </MudField>  
@@ -56,11 +61,12 @@
     private string currentWord;
     private Random rnd = new Random();
     private List<char> prevGuesses = new List<char>();
-
+    private int counter = 0;
 
     private async void StartGame(){
         SetWord();
         numberGuess = 0;
+        counter = 0;
         imageSource = $"images/0.jpg";
         wrongletters = "";
         prevGuesses.Clear();
@@ -83,19 +89,10 @@
         //WordsParse();
     }
 
-    //string InputContent
-    // {
-    //    get => letter;
-    //    set => letter = StripNonDigits(value);
-    //}
-    //
-    // string StripNonDigits(string str)
-    // {
-    //     return new String(str.Where(c => char.IsDigit(c)).ToArray());
-    // }*/
-
     private void GuessLetter(){
         if (string.IsNullOrEmpty(letter) || int.TryParse(letter, out _ )) return;
+
+        counter++;
 
         if (currentWord.Contains(letter, StringComparison.CurrentCultureIgnoreCase)){
             int position = 0;
@@ -114,9 +111,10 @@
 
             if (!(underlines.Contains("-", StringComparison.CurrentCultureIgnoreCase))){
                 //the game was won
+                letter = "";
                 ShowImage(12);
                 NewGame();
-                
+
                 //do we want to redirect to highscores page?
                 //NavManager.NavigateTo("highscore");
 
@@ -135,6 +133,7 @@
 
         //check if the game was lost
         if (numberGuess == 10){
+            letter = "";
             underlines = "Sorry you lost, try again!";
             ShowImage(11);
             NewGame();

@@ -39,6 +39,12 @@ function accessDOMElement(){
 
     btn = document.getElementById('userletterDiv');
     btn.style = "display:block; margin-left: auto; margin-right: auto;";
+
+    btn = document.getElementById('counter')
+    btn.style = "text-align: center; margin-left: auto; margin-right: auto;";
+
+    btn = document.getElementById('counterDiv');
+    btn.style = "display:block; margin-left: auto; margin-right: auto;";
 }
 
 function endGameScreen(){
@@ -73,6 +79,9 @@ function endGameScreen(){
 
     btn = document.getElementById('newGame');
     btn.style = "display:block; padding:10px; margin-left: auto; margin-right: auto; margin-top: 25px;";
+
+    btn = document.getElementById('counter')
+    btn.style = "display:none;";
 }
 </script>
 <component type="typeof(App)" render-mode="ServerPrerendered" />
