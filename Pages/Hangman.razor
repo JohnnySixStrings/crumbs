@@ -61,7 +61,8 @@
     private Word[] wordArr;
     private string currentWord;
     private Random rnd = new Random();
-    private List<char> prevGuesses = new List<char>();
+    private List<char> wrongGuesses = new List<char>();
+    private List<char> allGuesses = new List<char>();
     private int counter = 0;
 
     private async void StartGame(){
@@ -70,7 +71,8 @@
         counter = 0;
         imageSource = $"images/0.jpg";
         wrongletters = "";
-        prevGuesses.Clear();
+        wrongGuesses.Clear();
+        allGuesses.Clear(); 
         await jsRuntime.InvokeAsync<object>("accessDOMElement");
     }
 
@@ -93,8 +95,13 @@
     private void GuessLetter(){
         if (string.IsNullOrEmpty(letter) || int.TryParse(letter, out _ )) return;
 
+        if (allGuesses.Contains(char.Parse(letter)))
+        {
+            return;
+        }
+        allGuesses.Add(char.Parse(letter));
+        
         counter++;
-
         if (currentWord.Contains(letter, StringComparison.CurrentCultureIgnoreCase)){
             int position = 0;
             var replacement = underlines.ToCharArray();
@@ -125,8 +132,8 @@
             } 
         } else{
             //guess was not in answer
-            prevGuesses.Add(char.Parse(letter));
-            wrongletters = string.Join(" ", prevGuesses);
+            wrongGuesses.Add(char.Parse(letter));
+            wrongletters = string.Join(" ", wrongGuesses);
             IncrementGuess(); 
         }      
     }
