@@ -137,7 +137,8 @@
         //check if the game was lost
         if (numberGuess == 10){
             letter = "";
-            underlines = "Sorry you lost, try again!";
+            currentWord = currentWord.ToUpper();
+            underlines = "Sorry you lost, try again! The correct word was: " + currentWord + "!";
             ShowImage(11);
             NewGame();
         } else{
