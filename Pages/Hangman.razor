@@ -82,7 +82,7 @@
 
     private void SetWord(){
         wordArr = HangmanDb.Words.ToArray();
-        int index = rnd.Next(0, 139);
+        int index = rnd.Next(0, 133);
         currentWord = wordArr[index].WordString;
         underlines = string.Concat(Enumerable.Repeat(" - ", currentWord.Length));
     }
@@ -144,6 +144,7 @@
         //check if the game was lost
         if (numberGuess == 10){
             letter = "";
+            underlines = "";
             currentWord = currentWord.ToUpper();
             underlines = "Sorry you lost, try again! The correct word was: " + currentWord + "!";
             ShowImage(11);
