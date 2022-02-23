@@ -35,18 +35,14 @@ else
     protected override async Task OnInitializedAsync()
     {
         HangmanDb = await DbFactory.CreateDbContextAsync();
-        IQueryable<Highscore> query2 =
-            HangmanDb.Highscores
-                .OrderBy(s => s.Score)
-                .Take(10);
+
         var query = HangmanDb.Highscores
-            .OrderByDescending(s => s.Score)
+            .OrderBy(s => s.Score)
             .Take(10);
         
         TopScorers = query
             .ToList();
         await base.OnInitializedAsync();
-        Console.WriteLine("I wrote to the terminal");
     }
     public void Dispose()
     {
