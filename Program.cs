@@ -18,6 +18,7 @@ builder.Services.AddDbContextFactory<HangmanDbContext>( options=> options.UseSql
 builder.Services.AddRazorPages();
 builder.Services.AddMudServices();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

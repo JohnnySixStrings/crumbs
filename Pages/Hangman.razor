@@ -7,6 +7,7 @@
 @inject IJSRuntime jsRuntime
 @inject IDbContextFactory<HangmanDbContext> DbFactory
 @inject NavigationManager NavManager
+@inject IHttpContextAccessor Accessor
 
 <PageTitle>Hangman!</PageTitle>
 <MudGrid>
@@ -112,6 +113,8 @@
             if (!(underlines.Contains("-", StringComparison.CurrentCultureIgnoreCase))){
                 //the game was won
                 letter = "";
+                HangmanDb.Highscores.Add(new Highscore { Username = @Accessor.HttpContext.User.Identity.Name, Score = counter });
+                HangmanDb.SaveChanges();
                 ShowImage(12);
                 NewGame();
 
