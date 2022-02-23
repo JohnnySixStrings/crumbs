@@ -93,8 +93,14 @@
     private void GuessLetter(){
         if (string.IsNullOrEmpty(letter) || int.TryParse(letter, out _ )) return;
 
-        counter++;
+        if (prevGuesses.Contains(char.Parse(letter)) || underlines.Contains(char.Parse(letter)))
+        {
+            counter--;
+            numberGuess--;
+        }
 
+        counter++;
+    
         if (currentWord.Contains(letter, StringComparison.CurrentCultureIgnoreCase)){
             int position = 0;
             var replacement = underlines.ToCharArray();
@@ -117,11 +123,6 @@
                 HangmanDb.SaveChanges();
                 ShowImage(12);
                 NewGame();
-
-                //do we want to redirect to highscores page?
-                //NavManager.NavigateTo("highscore");
-
-                //do we need to add to highscores table? or is it done automatically?
             } 
         } else{
             //guess was not in answer
@@ -156,7 +157,7 @@
         HangmanDb?.Dispose();
     }
 
-    //unless im mistaken there are only 140 words here, not 200 -MurMaed
+    //unless im mistaken there are only 140 words here, not 200 -MurMaed- You lied
     public string Words = @"children,fellow,piano,account,attempt,perfectly,taken,not,everything,future,trace,eager,paid,shop,determine,blanket,wing,setting,sign,nearest,
     day,before,adventure,completely,does,right,ourselves,remarkable,poet,vessels,vapor,lift,believed,dug,water,written,feel,yet,not,his,
     fell,simply,atom,secret,package,repeat,aside,solution,studying,funny,night,post,bill,laid,army,note,clock,successful,nor,union,
